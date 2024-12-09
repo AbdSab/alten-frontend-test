@@ -1,0 +1,32 @@
+<div class="flex justify-content-center">
+    <div class="surface-card p-4 border-round w-10">
+        <h1 class="text-center mb-4">Contactez Nous</h1>
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+            <label for="email" class="block">Email</label>
+            <input id="email" formControlName="email" type="email" pInputText class="w-full border-1 border-round p-2" />
+            <small *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="text-red-500">
+                L'e-mail est requis et doit être valide.
+            </small>
+        </div>
+
+        <div class="field">
+            <label for="message" class="block">Message</label>
+            <textarea id="message" formControlName="message" rows="5" pInputTextarea class="w-full border-1 border-round p-2"></textarea>
+            <small *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="text-red-500">
+                Le message est obligatoire et doit contenir moins de 300 caractères.
+            </small>
+        </div>
+
+        <div class="flex w-full justify-content-end">
+            <p-button type="submit">
+                Envoyer
+            </p-button>
+        </div>
+        </form>
+
+        <p *ngIf="successMessage" class="text-green-500 mt-3 text-center">
+            Demande de contact envoyée avec succès.
+        </p>
+    </div>
+</div>

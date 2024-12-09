@@ -1,0 +1,77 @@
+<h1 class="text-center">Liste des produits</h1>
+
+<p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
+
+<p-dataView #dv [value]="products()" [rows]="5" [paginator]="true">
+    <ng-template pTemplate="list" let-products>
+        @for (product of products; track product) {
+            <p-card class="block mb-2">
+                <div class="flex gap-3 border-bottom-1 border-gray-400 pb-4">
+                    <img class="border-round" src="{{product.image}}" width="100" height="100" alt="{{product.name}}"/>
+
+                    <div class="flex-1">
+                        <span class="font-medium text-secondary text-sm">{{ product.category }}</span>
+                        <div class="text-xl font-medium text-900">{{ product.name }}</div>
+                        <span class="text-yellow-600">
+                            <i 
+                                *ngFor="let star of ratingReference; let i = index"
+                                class="pi" 
+                                [ngClass]="{
+                                    'pi-star-fill': i+1 <= product.rating,
+                                    'pi-star': i+1 > product.rating
+                                }">
+                            </i>
+                        </span>
+                        <div class="text-sm mt-2 flex-1">{{ product.description }}</div>
+                    </div>
+
+                    <div class="border-left-1 border-gray-400 pl-4 flex flex-column justify-content-between">
+                        <div>
+                            <div class="text-xs">{{ product.code }}</div>
+                            <div class="text-xl font-medium text-900">{{ product.price | currency }}</div>
+
+                            <div [ngClass]="{
+                                'text-green-600': product.inventoryStatus === 'INSTOCK',
+                                'text-yellow-600': product.inventoryStatus === 'LOWSTOCK',
+                                'text-red-500': product.inventoryStatus === 'OUTOFSTOCK'
+                            }">{{product.inventoryStatus | availability}}</div>
+                        </div>
+
+                        <ng-container *ngIf="getCartQuantityByProduct(product.id)() as item; else addToCartButton">
+                            <div class="flex gap-2 w-12rem align-items-center">
+                                <button class="bg-transparent border-1 text-primary border-primary border-circle outline-none w-2rem h-2rem cursor-pointer" (click)="removeFromCart(item.product.id)">
+                                    <i class="pi pi-minus"></i>
+                                </button>
+                                <span class="font-bold text-xl">{{ item.quantity }}</span>
+                                <button class="bg-transparent border-1 text-primary border-primary border-circle outline-none w-2rem h-2rem cursor-pointer" (click)="addToCart(item.product)">
+                                    <i class="pi pi-plus"></i>
+                                </button>
+                            </div>
+                        </ng-container>
+                          
+                        <ng-template #addToCartButton>
+                            <p-button class="w-12rem" severity="primary" (onClick)="addToCart(product)">Ajouter au panier</p-button>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class="flex justify-content-end gap-3">
+                        <p-button label="Modifier" severity="secondary" (onClick)="onUpdate(product)"/>
+                        <p-button label="Supprimer" severity="danger" (onClick)="onDelete(product)" />
+                    </div>
+                </ng-template>
+            </p-card>
+        }
+    </ng-template>
+</p-dataView>
+
+<p-dialog [(visible)]="isDialogVisible"
+    [style]="{ width: '50vw' }"
+    header="Ajout/Edition produit">
+    <app-product-form
+        [product]="editedProduct()"
+        (save)="onSave($event)"
+        (cancel)="onCancel()"
+    />
+</p-dialog>

@@ -1,0 +1,50 @@
+<div class="relative">
+    <div class="relative cursor-pointer" (click)="onClick()">
+        <i class="pi pi-shopping-cart" style="font-size: 2rem"></i>
+        <span 
+            *ngIf="totalQuantity() > 0" 
+            class="absolute top-0 right-0 bg-green-500 border-circle p-1 px-2 text-xs text-white" 
+            style="transform: translate(10px, -10px);"
+        >
+            {{totalQuantity()}}
+        </span>
+    </div>
+    <div *ngIf="isExpanded" class="absolute right-0 bg-white border-1 border-round border-gray-300 z-5 p-4 shadow-1	w-max">
+        <div *ngIf="!cart().length">
+            Le panier est vide.
+        </div>
+        <ng-container *ngIf="cart().length">
+            <div class="max-h-30rem overflow-y-scroll">
+                <div *ngFor="let item of cart()" class="flex justify-content-between align-items-center gap-4 border-bottom-1 border-gray-300 mb-2 pb-2">
+                    <div class="flex align-items-center flex-1 gap-2">
+                        <img class="border-round" src="{{item.product.image}}" width="32" height="32" alt="{{item.product.name}}"/>
+                        <div>
+                            <div>
+                                <span class="text-black font-bold">{{ item.product.name }}</span>
+                                <span class="text-xs"> x {{ item.quantity }}</span>
+                            </div>
+                            <div>Prix: {{ item.product.price | currency}}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-xs">Total:</div>
+                        <div class="font-bold text-black">{{ item.quantity * item.product.price | currency}}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-transparent border-1 border-red-500 text-red-500 border-circle outline-none w-2rem h-2rem cursor-pointer" (click)="removeFromCart(item.product.id)">
+                            <i class="pi pi-minus"></i>
+                        </button>
+                        <button class="bg-transparent border-1 border-green-500 text-green-500 border-circle outline-none w-2rem h-2rem cursor-pointer" (click)="addToCart(item.product)">
+                            <i class="pi pi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex">
+                <p-button severity="danger" (onClick)="clearAll()" class="w-full" styleClass="w-full flex justify-content-center">
+                    Vider le panier
+                </p-button>
+            </div>
+        </ng-container>
+    </div>
+</div>
